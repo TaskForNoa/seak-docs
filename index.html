@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SEAK – dokumentacja</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #010617;
+    --card: rgba(15,23,42,.9);
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: #e2e8f0; }
+  #gate, main { min-height: 100vh; padding: 40px 20px; display: grid; place-items: center; }
+  .panel { background: var(--card); border-radius: 18px; padding: 40px; max-width: 420px; width: min(90vw, 420px); border: 1px solid rgba(148,163,184,.2); box-shadow: 0 30px 120px rgba(2,6,23,.55); }
+  h1 { margin: 0 0 1rem; font-size: 1.9rem; }
+  p { margin: 0 0 1.5rem; color: var(--muted); line-height: 1.5; }
+  input { width: 100%; padding: 12px 16px; background: rgba(148,163,184,.1); border: 1px solid rgba(148,163,184,.3); border-radius: 10px; color: inherit; font-size: 1rem; letter-spacing: .4em; text-align: center; }
+  button { margin-top: 20px; width: 100%; padding: 15px; border: none; border-radius: 999px; background: var(--accent); color: #022c43; font-weight: 700; font-size: 1rem; cursor: pointer; }
+  button:hover { opacity: .9; }
+  .error { margin-top: 12px; color: #f87171; font-size: .9rem; display: none; }
+  main { display: none; max-width: 1100px; margin: 0 auto; padding-bottom: 80px; }
+  header { text-align: center; margin-bottom: 40px; }
+  header p { color: var(--muted); }
+  .slides { display: grid; gap: 30px; }
+  .slide { background: var(--card); border-radius: 18px; border: 1px solid rgba(148,163,184,.2); padding: 24px; box-shadow: 0 20px 80px rgba(2,6,23,.45); }
+  .slide h3 { margin: 0 0 10px; }
+  .slide p { margin: 0 0 18px; color: var(--muted); }
+  .slide img { width: 100%; border-radius: 12px; border: 1px solid rgba(148,163,184,.25); }
+  .download { margin: 60px auto 0; display: inline-flex; align-items: center; gap: .6rem; padding: 14px 28px; border-radius: 999px; background: var(--accent); color: #022c43; font-weight: 700; text-decoration: none; }
+</style>
+</head>
+<body>
+<section id="gate">
+  <div class="panel">
+    <h1>SEAK Docs</h1>
+    <p>Wpisz kod, aby otworzyć prezentację.</p>
+    <input type="password" id="pin" placeholder="PIN" maxlength="10" autofocus />
+    <button onclick="unlock()">Wejdź</button>
+    <div class="error" id="error">Nieprawidłowy kod</div>
+  </div>
+</section>
+
+<main id="content">
+  <header>
+    <h1>SEAK – dokumentacja interfejsu</h1>
+    <p>Slajdy z komentarzami: onboarding, kreator kursów, panel Teaching. Na dole znajdziesz guzik do pobrania PDF.</p>
+  </header>
+
+  <section class="slides" id="slides"></section>
+
+  <a class="download" href="/speakology-report.pdf" download>📄 Pobierz prezentację (PDF 3.3&nbsp;MB)</a>
+</main>
+
+<script>
+const PIN = '0524';
+const slides = [
+  ['Rejestracja nauczyciela', 'Formularz startowy z logowaniem Google/Microsoft lub e‑mailem.', '01-registration-form.jpg'],
+  ['Weryfikacja e-mail', 'Speakology wymusza potwierdzenie adresu lub pozwala je pominąć.', '02-email-verification.jpg'],
+  ['Trial vs kod dostępu', 'Ekran wyboru pomiędzy darmowym trialem a kodem aktywacyjnym.', '03-get-started-options.jpg'],
+  ['Kod dostępu', 'Modal do wprowadzenia kodu nauczyciela (np. damian8893).', '04-access-code-dialog.jpg'],
+  ['Intro produktowe', 'Pierwszy ekran onboardingowy – AI tutor 24/7.', '05-onboarding-step1.jpg'],
+  ['Biblioteka tematów', 'Gotowe scenariusze + kreator własnych tematów.', '06-onboarding-topics.jpg'],
+  ['Profile AI', 'Galeria instruktorów z różnymi akcentami.', '07-onboarding-ai-profiles.jpg'],
+  ['Wyzwania w klasie', 'Checklist problemów (trema, brak czasu itp.).', '08-onboarding-challenges.jpg'],
+  ['Case study', 'Dowód skuteczności (Uniwersytet Wisconsin).', '09-onboarding-case-study.jpg'],
+  ['Planowane użycie', 'Jak nauczyciel chce wykorzystywać Speakology.', '10-onboarding-usage.jpg'],
+  ['Preview gradebook', 'Mockup dziennika ocen i feedbacku.', '11-onboarding-gradebook-preview.jpg'],
+  ['Decydent zakupowy', 'Pytanie o to, kto kupuje narzędzia.', '12-onboarding-purchasing.jpg'],
+  ['Standardy edukacyjne', 'Obsługa ACTFL, CEFR, IB, AP itd.', '13-onboarding-standards.jpg'],
+  ['Timing wdrożenia', 'Kiedy szkoła zwykle wdraża nowe narzędzia.', '14-onboarding-adoption-timing.jpg'],
+  ['Kanały wsparcia', 'Mail, telefon, WhatsApp, szkolenia.', '15-onboarding-support.jpg'],
+  ['Podsumowanie onboarding', 'Opis AI asystenta i opcje konfiguracji.', '16-onboarding-final.jpg'],
+  ['Konfiguracja konta', 'Wybór języka ojczystego i płci.', '17-account-setup-language.jpg'],
+  ['Pusty Home', 'CTA do stworzenia pierwszego kursu.', '18-home-welcome.jpg'],
+  ['Kreator kursu – krok 1', 'Nazwa kursu i język.', '19-course-builder-step1.jpg'],
+  ['Lista kursów', 'Widok z przyciskiem „New course”.', '20-courses-empty.jpg'],
+  ['Instruktorzy AI', 'Bio i historie AI tutorów.', '21-course-builder-with-instructors.jpg'],
+  ['Okresy lekcyjne', 'Opcjonalne dodanie class periods.', '22-course-builder-class-periods.jpg'],
+  ['Szablony kursów', 'English 1-3, Aviation, Business itd.', '23-course-builder-templates.jpg'],
+  ['Kurs gotowy', 'Kod zaproszenia + tipy dla nauczycieli.', '24-course-created.jpg'],
+  ['Widok kursanta', 'Dashboard ucznia z modułami.', '25-home-course-view.jpg'],
+  ['Lista lekcji', 'Lekcje w rozdziale (Learn More/Start Call).', '26-chapter-expanded-modules.jpg'],
+  ['Teaching – Gradebook', 'Dziennik ocen i baner o trialu.', '27-teaching-gradebook.jpg'],
+  ['Teaching – Transcripts', 'Drzewo rozmów do audytu.', '28-teaching-transcripts.jpg'],
+  ['Teaching – Insights', 'Wykresy aktywności i słownictwa.', '29-teaching-insights.jpg'],
+  ['Organize curriculum', 'Edytor kolejności i modułu “Talk about Anything”.', '30-teaching-organize.jpg'],
+  ['Teaching – Assignments', 'Pusta tablica z CTA „Create a new assignment”.', '31-teaching-assignments.jpg'],
+  ['Teaching – Quizzes', 'Widok quizów z przyciskiem tworzenia.', '32-teaching-quizzes.jpg'],
+  ['Teaching – Roster', 'Lista uczniów + zakładka Class Periods.', '33-teaching-roster.jpg'],
+  ['Invite code modal', 'Instrukcje i kod english101-314690 do udostępnienia.', '34-teaching-invite-code.jpg'],
+  ['Teaching – Settings', 'Pełne ustawienia: tłumaczenia, grading, captions, feedback.', '35-teaching-settings.jpg']
+];
+
+const gate = document.getElementById('gate');
+const content = document.getElementById('content');
+const slidesEl = document.getElementById('slides');
+
+function renderSlides() {
+  slidesEl.innerHTML = '';
+  slides.forEach(([title, desc, img]) => {
+    const article = document.createElement('article');
+    article.className = 'slide';
+    article.innerHTML = `<h3>${title}</h3><p>${desc}</p><img src="./screenshots/${img}" alt="${title}" loading="lazy">`;
+    slidesEl.appendChild(article);
+  });
+}
+
+function unlock() {
+  const pinInput = document.getElementById('pin');
+  if (pinInput.value.trim() === PIN) {
+    sessionStorage.setItem('seak_access', '1');
+    gate.style.display = 'none';
+    content.style.display = 'block';
+    renderSlides();
+  } else {
+    const err = document.getElementById('error');
+    err.style.display = 'block';
+    pinInput.value = '';
+    pinInput.focus();
+  }
+}
+
+document.getElementById('pin').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') unlock();
+});
+
+if (sessionStorage.getItem('seak_access') === '1') {
+  gate.style.display = 'none';
+  content.style.display = 'block';
+  renderSlides();
+}
+</script>
+</body>
+</html>
